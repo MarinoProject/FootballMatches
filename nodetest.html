@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prototype</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      body {
+        font-family: "DM Sans", sans-serif;
+        margin: 0;
+      }
+
+      nav {
+        background-color: #111322;
+        padding: 20px 0;
+      }
+
+      nav ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: left;
+        padding-left: 7%;
+      }
+
+      nav li {
+        margin: 0;
+        padding: 0;
+        margin: 7px;
+      }
+
+      nav a {
+        text-decoration: none;
+        color: #fff;
+        font-size: 18px;
+        font-weight: 600;
+      }
+
+      .headerOne {
+        padding: 150px;
+        text-align: center;
+        background: #dce0e8;
+        color: #fff;
+        font-size: 30px;
+        background-image: url("Tournaments2.png");
+        background-size: auto 100%;
+        background-position: center center;
+        /* background-repeat: no-repeat; */
+      }
+
+      .container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+      }
+
+      .left,
+      .main,
+      .right {
+        box-sizing: border-box;
+        padding: 20px;
+      }
+
+      .left {
+        background-color: transparent;
+        width: 15%;
+      }
+
+      .main {
+        width: 70%;
+      }
+
+      .right {
+        background-color: transparent;
+        width: 15%;
+      }
+
+      .tournament-container {
+        margin-bottom: 0px;
+        text-align: left;
+        padding: 0px;
+        margin-left: 0;
+        width: 100%;
+      }
+
+      .tournament-title {
+        font-size: 17px;
+        margin-bottom: 10px;
+        text-align: left;
+        padding-left: 10px;
+      }
+
+      .match-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+      }
+
+      .match-box {
+        border: 1px solid #05040d;
+        padding: 7px;
+        padding-left: 15px;
+        margin: 10px;
+        text-align: left;
+        width: calc(33.33% - 20px);
+        box-sizing: border-box;
+        border-radius: 5px;
+      }
+
+      @media (max-width: 1700px) {
+        .match-box {
+          width: calc(50% - 20px);
+        }
+      }
+
+      @media (max-width: 920px) {
+        .match-box {
+          width: 100%;
+        }
+      }
+
+      @media (max-width: 1220px) {
+        .left,
+        .main,
+        .right {
+          width: 100%;
+        }
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 0;
+        height: 100px;
+        border: none;
+        position: relative;
+        font-size: 14px;
+        font-weight: bold;
+      }
+
+      td {
+        padding: 11px;
+        text-align: center;
+        border: none;
+      }
+
+      td:nth-child(3) {
+        width: 25%;
+      }
+
+      td:nth-child(2) {
+        text-align: right;
+        padding-right: 15px;
+        position: relative;
+      }
+
+      td:nth-child(2)::after {
+        content: "";
+        position: absolute;
+        top: 20%;
+        bottom: 20%;
+        right: 0;
+        width: 1px;
+        background-color: #05040d;
+        height: 100%;
+        margin: auto;
+      }
+
+      td:first-child {
+        text-align: left;
+        display: flex;
+        align-items: center;
+      }
+
+      td:first-child img {
+        width: 30px;
+        height: 30px;
+        margin-right: 10px;
+      }
+
+      tr:last-child td:first-child {
+        align-items: center;
+      }
+
+      td:nth-child(2) {
+        vertical-align: middle;
+      }
+
+      tr:last-child td:nth-child(2) {
+        vertical-align: middle;
+      }
+
+      tr:nth-child(odd) td {
+        background-color: transparent;
+      }
+
+      h4 {
+        font-weight: 100;
+      }
+    </style>
+  </head>
+
+  <body>
+    <nav>
+      <ul>
+        <li><a href="#">What Football Match Could I Watch This Week?</a></li>
+      </ul>
+    </nav>
+
+    <div class="headerOne"></div>
+
+    <div class="container">
+      <div class="left">
+        <p></p>
+      </div>
+
+      <div class="main">
+        <h2>Matches This Week (Please Wait To Load)</h2>
+        <h4>
+          Note that the only international fixtures featured are the Euros and
+          FIFA World Cup.
+        </h4>
+        <div class="match-container" id="data-container"></div>
+      </div>
+
+      <div class="right">
+        <p></p>
+      </div>
+    </div>
+
+    <script>
+      fetch("http://localhost:3000/api/football-data")
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Data from Server:", data);
+
+          displayDataInHtml(data);
+        })
+        .catch((error) => console.error("Error:", error));
+
+      function displayDataInHtml(data) {
+        const dataContainer = document.getElementById("data-container");
+
+        if (data && data.matches && Array.isArray(data.matches)) {
+          const currentDate = new Date();
+          const preferredCompetitions = [
+            "FIFA World Cup",
+            "European Championship",
+            "UEFA Champions League",
+            "Premier League",
+            "LaLiga",
+            "Serie A",
+            "Bundesliga",
+            "Ligue 1",
+            "Championship",
+            "Eredivisie",
+            "Primeira Liga",
+            "Campeonato Brasileiro Série A",
+            "Copa Libertadores",
+          ];
+
+          for (const competition of preferredCompetitions) {
+            const competitionName = mapCompetitionName(competition);
+
+            if (
+              data.matches.some(
+                (match) => match.competition.name === competitionName
+              )
+            ) {
+              const competitionSection = document.createElement("div");
+              competitionSection.classList.add("tournament-container");
+
+              const tournamentTitle = document.createElement("h3");
+              tournamentTitle.classList.add("tournament-title");
+              tournamentTitle.textContent = competition;
+              competitionSection.appendChild(tournamentTitle);
+
+              const matchesInCompetition = data.matches.filter(
+                (match) => match.competition.name === competitionName
+              );
+
+              for (let i = 0; i < matchesInCompetition.length; i += 9) {
+                const matchRow = document.createElement("div");
+                matchRow.classList.add("match-container");
+
+                for (let j = i; j < i + 9; j++) {
+                  const match = matchesInCompetition[j];
+
+                  if (match) {
+                    const matchDiv = document.createElement("div");
+                    matchDiv.classList.add("match-box");
+
+                    const homeTeamName = match.homeTeam.name
+                      .replace(/\bFC\s*/, "")
+                      .trim();
+                    const awayTeamName = match.awayTeam.name
+                      .replace(/\bFC\s*/, "")
+                      .trim();
+
+                    const matchTable = document.createElement("table");
+
+                    const homeTeamRow = document.createElement("tr");
+                    homeTeamRow.innerHTML = `
+                  <td>
+                    <img src="${match.homeTeam.crest}" alt="${homeTeamName} Crest">
+                    ${homeTeamName}
+                  </td>
+                `;
+
+                    if (match.score.fullTime.home !== null) {
+                      homeTeamRow.innerHTML += `<td>${match.score.fullTime.home}</td>`;
+                    } else {
+                      homeTeamRow.innerHTML += `<td></td>`;
+                    }
+
+                    homeTeamRow.innerHTML += `<td rowspan="2">${formatMatchDateTime(
+                      match.utcDate,
+                      match.status
+                    )}</td>`;
+                    matchTable.appendChild(homeTeamRow);
+
+                    const awayTeamRow = document.createElement("tr");
+                    awayTeamRow.innerHTML = `
+                  <td>
+                    <img src="${match.awayTeam.crest}" alt="${awayTeamName} Crest">
+                    ${awayTeamName}
+                  </td>
+                `;
+
+                    if (match.score.fullTime.away !== null) {
+                      awayTeamRow.innerHTML += `<td>${match.score.fullTime.away}</td>`;
+                    } else {
+                      awayTeamRow.innerHTML += `<td></td>`;
+                    }
+
+                    matchTable.appendChild(awayTeamRow);
+
+                    matchDiv.appendChild(matchTable);
+                    matchRow.appendChild(matchDiv);
+                  }
+                }
+
+                competitionSection.appendChild(matchRow);
+              }
+              dataContainer.appendChild(competitionSection);
+            }
+          }
+        } else {
+          dataContainer.innerHTML = "<p>No matches available</p>";
+        }
+      }
+
+      function formatMatchDateTime(utcDate, status) {
+        const matchDate = new Date(utcDate);
+        const currentDate = new Date();
+
+        if (status === "IN_PLAY") {
+          return "In Play"; // Display only 'In Play' if the match is ongoing
+        }
+
+        if (status === "FINISHED") {
+          const options = { weekday: "short", day: "numeric", month: "short" };
+          const formattedDate = matchDate.toLocaleDateString("en-GB", options);
+          const formattedTime = matchDate.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+          return `${formattedDate} ${formattedTime}`; // Show date and time for finished matches
+        }
+
+        if (isToday(matchDate, currentDate)) {
+          return (
+            "Today " +
+            matchDate.toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            })
+          );
+        } else if (isTomorrow(matchDate, currentDate)) {
+          return (
+            "Tomorrow " +
+            matchDate.toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            })
+          );
+        } else if (isYesterday(matchDate, currentDate)) {
+          return (
+            "Yesterday " +
+            matchDate.toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            })
+          );
+        } else {
+          const options = { weekday: "short", day: "numeric", month: "short" };
+          const formattedDate = matchDate.toLocaleDateString("en-GB", options);
+          const formattedTime = matchDate.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+
+          return `${formattedDate} ${formattedTime}`;
+        }
+      }
+
+      function isToday(date, currentDate) {
+        return (
+          date.getDate() === currentDate.getDate() &&
+          date.getMonth() === currentDate.getMonth() &&
+          date.getFullYear() === currentDate.getFullYear()
+        );
+      }
+
+      function isTomorrow(date, currentDate) {
+        const tomorrow = new Date(currentDate);
+        tomorrow.setDate(currentDate.getDate() + 1);
+
+        return (
+          date.getDate() === tomorrow.getDate() &&
+          date.getMonth() === tomorrow.getMonth() &&
+          date.getFullYear() === tomorrow.getFullYear()
+        );
+      }
+
+      function isYesterday(date, currentDate) {
+        const yesterday = new Date(currentDate);
+        yesterday.setDate(currentDate.getDate() - 1);
+
+        return (
+          date.getDate() === yesterday.getDate() &&
+          date.getMonth() === yesterday.getMonth() &&
+          date.getFullYear() === yesterday.getFullYear()
+        );
+      }
+
+      function mapCompetitionName(competition) {
+        const mappings = {
+          LaLiga: "Primera Division",
+        };
+        return mappings[competition] || competition;
+      }
+    </script>
+  </body>
+</html>
